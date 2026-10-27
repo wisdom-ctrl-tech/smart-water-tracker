@@ -1,0 +1,21 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor/IDE folders
+.vscode/
+.idea/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+error_log
+
+# Local database backups (the database.sql schema is tracked)
+*.sql.gz
+*.dump

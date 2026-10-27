@@ -1,0 +1,572 @@
+/* ============================================================
+   Smart Water Intake Tracker - style.css
+   A simple blue and white water theme.
+   ============================================================ */
+
+:root {
+    --blue-dark: #0b4f8a;
+    --blue: #1d7fd4;
+    --blue-light: #e8f3fd;
+    --blue-lighter: #f5faff;
+    --text: #19364d;
+    --text-soft: #5c7488;
+    --border: #d4e5f5;
+    --green: #1e8e5a;
+    --green-bg: #e6f7ee;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --amber: #b7791f;
+    --amber-bg: #fdf5e3;
+    --radius: 12px;
+    --shadow: 0 2px 10px rgba(11, 79, 138, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    background: linear-gradient(180deg, var(--blue-light) 0%, #ffffff 320px);
+    min-height: 100vh;
+}
+
+h1, h2 {
+    color: var(--blue-dark);
+    margin: 0 0 12px;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 1.6rem;
+}
+
+h2 {
+    font-size: 1.15rem;
+}
+
+a {
+    color: var(--blue);
+}
+
+/* ---------------- Buttons ---------------- */
+
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background: var(--blue);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: var(--blue-dark);
+}
+
+.btn-water {
+    background: var(--blue-light);
+    color: var(--blue-dark);
+    border-color: var(--border);
+}
+
+.btn-water:hover {
+    background: #d5eafb;
+    border-color: var(--blue);
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.btn-danger {
+    background: #ffffff;
+    color: var(--red);
+    border-color: #f0c3bd;
+}
+
+.btn-danger:hover {
+    background: var(--red-bg);
+}
+
+.btn-small {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+/* ---------------- Messages ---------------- */
+
+.message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid;
+    margin: 0 0 18px;
+    font-size: 0.95rem;
+    transition: opacity 0.6s ease;
+}
+
+.message-success {
+    background: var(--green-bg);
+    border-color: #b7e4c9;
+    color: var(--green);
+}
+
+.message-error {
+    background: var(--red-bg);
+    border-color: #f3c9c4;
+    color: var(--red);
+}
+
+.message-error div + div {
+    margin-top: 4px;
+}
+
+.message-hide {
+    opacity: 0;
+}
+
+/* ---------------- Login / Register pages ---------------- */
+
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue) 55%, #7fc4f5 100%);
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 28px;
+    box-shadow: 0 10px 30px rgba(6, 46, 82, 0.28);
+}
+
+.auth-logo {
+    font-size: 2.4rem;
+    text-align: center;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.auth-title {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-soft);
+    margin: 0 0 22px;
+    font-size: 0.95rem;
+}
+
+.auth-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 11px 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--blue-lighter);
+}
+
+.auth-form input:focus,
+.custom-form input:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(29, 127, 212, 0.15);
+}
+
+.auth-switch {
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--text-soft);
+    margin: 20px 0 0;
+}
+
+/* ---------------- Dashboard layout ---------------- */
+
+.topbar {
+    background: var(--blue-dark);
+    color: #ffffff;
+    box-shadow: var(--shadow);
+}
+
+.topbar-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.92rem;
+}
+
+.hello {
+    opacity: 0.92;
+}
+
+.container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 26px 20px 48px;
+}
+
+.welcome {
+    margin-bottom: 4px;
+}
+
+.welcome-sub {
+    color: var(--text-soft);
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.span-2 {
+    grid-column: 1 / -1;
+}
+
+.card-hint,
+.card-note {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    margin: 0 0 14px;
+}
+
+.card-note {
+    margin: 10px 0 0;
+}
+
+/* ---------------- Progress ---------------- */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.stat {
+    background: var(--blue-lighter);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--blue-dark);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+}
+
+.progress-bar {
+    height: 26px;
+    background: var(--blue-light);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #4facfe 0%, var(--blue) 60%, var(--blue-dark) 100%);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.progress-caption {
+    margin: 8px 0 0;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    text-align: right;
+}
+
+.tip {
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    border: 1px solid;
+}
+
+.tip-low {
+    background: var(--amber-bg);
+    border-color: #f0dcae;
+    color: var(--amber);
+}
+
+.tip-good {
+    background: var(--blue-light);
+    border-color: var(--border);
+    color: var(--blue-dark);
+}
+
+.tip-done {
+    background: var(--green-bg);
+    border-color: #b7e4c9;
+    color: var(--green);
+}
+
+/* ---------------- Forms inside cards ---------------- */
+
+.quick-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.quick-buttons .btn {
+    flex: 1 1 90px;
+}
+
+.custom-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.inline-fields {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.inline-fields input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--blue-lighter);
+}
+
+/* ---------------- History table ---------------- */
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.table th {
+    background: var(--blue-lighter);
+    color: var(--blue-dark);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.table tbody tr:hover {
+    background: var(--blue-lighter);
+}
+
+.table .right {
+    text-align: right;
+}
+
+.empty {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ---------------- Weekly bars ---------------- */
+
+.week-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+.week-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.week-value {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+}
+
+.week-bar-wrap {
+    width: 100%;
+    height: 130px;
+    background: var(--blue-lighter);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.week-bar {
+    width: 100%;
+    background: linear-gradient(180deg, #7cc4f7 0%, var(--blue) 100%);
+    border-radius: 8px 8px 0 0;
+    transition: height 0.4s ease;
+}
+
+.week-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue-dark);
+}
+
+.week-date {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+}
+
+.week-total {
+    margin: 18px 0 0;
+    font-size: 0.95rem;
+    color: var(--text-soft);
+}
+
+.week-total strong {
+    color: var(--blue-dark);
+}
+
+.footer-note {
+    margin: 24px 0 0;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    text-align: center;
+}
+
+/* ---------------- Mobile screens ---------------- */
+
+@media (max-width: 760px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    .week-chart {
+        gap: 4px;
+    }
+
+    .week-bar-wrap {
+        height: 100px;
+    }
+
+    .week-date {
+        display: none;
+    }
+
+    .progress-caption {
+        text-align: left;
+    }
+}
