@@ -24,6 +24,14 @@ define('MAX_ENTRY_ML', 5000);   // A single water entry may not be bigger than t
 define('MIN_GOAL_ML', 500);     // Smallest daily goal a user may choose
 define('MAX_GOAL_ML', 10000);   // Largest daily goal a user may choose
 
+// How long a "forgot password" link stays valid, in minutes.
+define('RESET_TOKEN_MINUTES', 30);
+
+// XAMPP has no mail server, so the reset link is shown on the page after
+// the email address is entered. Set this to false if you ever send the
+// link by email instead.
+define('SHOW_RESET_LINK', true);
+
 date_default_timezone_set(APP_TIMEZONE);
 
 /**

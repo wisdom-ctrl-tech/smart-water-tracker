@@ -11,14 +11,16 @@ if (is_logged_in()) {
     exit;
 }
 
-$conn    = db();
-$errors  = [];
-$email   = '';
-$message = '';
+$conn          = db();
+$errors        = [];
+$email         = '';
+$message       = '';
+$message_type  = 'success';
 
-// A message left by register.php or logout.php.
+// A message left by register.php, logout.php or reset-password.php.
 if (!empty($_SESSION['flash'])) {
-    $message = $_SESSION['flash']['text'];
+    $message      = $_SESSION['flash']['text'];
+    $message_type = isset($_SESSION['flash']['type']) ? $_SESSION['flash']['type'] : 'success';
     unset($_SESSION['flash']);
 }
 
@@ -70,7 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p class="auth-subtitle">Log in to your account</p>
 
     <?php if ($message !== ''): ?>
-        <div class="message message-success"><?php echo e($message); ?></div>
+        <div class="message <?php echo $message_type === 'error' ? 'message-error' : 'message-success'; ?>">
+            <?php echo e($message); ?>
+        </div>
     <?php endif; ?>
 
     <?php if (!empty($errors)): ?>
@@ -88,7 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="email" id="email" name="email" value="<?php echo e($email); ?>"
                placeholder="name@example.com" required>
 
-        <label for="password">Password</label>
+        <div class="label-row">
+            <label for="password">Password</label>
+            <a class="label-link" href="forgot-password.php">Forgot your password?</a>
+        </div>
         <input type="password" id="password" name="password"
                placeholder="Your password" required>
 

@@ -152,6 +152,14 @@ a {
     margin-top: 4px;
 }
 
+.message-link {
+    margin-top: 8px;
+}
+
+.message-link a {
+    font-weight: 600;
+}
+
 .message-hide {
     opacity: 0;
 }
@@ -226,6 +234,30 @@ a {
     font-size: 0.92rem;
     color: var(--text-soft);
     margin: 20px 0 0;
+}
+
+.auth-text {
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    margin: 0 0 18px;
+}
+
+.label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.label-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+
+.label-link:hover {
+    text-decoration: underline;
 }
 
 /* ---------------- Dashboard layout ---------------- */

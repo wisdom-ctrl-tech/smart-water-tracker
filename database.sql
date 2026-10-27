@@ -1,6 +1,6 @@
 -- ============================================================
 -- database.sql
--- Creates the database and the two tables used by the project.
+-- Creates the database and the three tables used by the project.
 -- Import this file in phpMyAdmin (see the README, Step 3).
 -- ============================================================
 
@@ -37,6 +37,26 @@ CREATE TABLE IF NOT EXISTS `water_logs` (
   PRIMARY KEY (`id`),
   KEY `idx_water_logs_user_date` (`user_id`, `logged_at`),
   CONSTRAINT `fk_water_logs_user`
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Table 3: password_resets  (one row per "forgot password" request)
+-- The real token is never stored: only its SHA-256 hash, so a copy
+-- of this table cannot be used to reset anybody's password.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `password_resets` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`     INT UNSIGNED NOT NULL,
+  `token_hash`  CHAR(64)     NOT NULL,
+  `expires_at`  DATETIME     NOT NULL,
+  `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_password_resets_token` (`token_hash`),
+  KEY `idx_password_resets_user` (`user_id`),
+  CONSTRAINT `fk_password_resets_user`
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

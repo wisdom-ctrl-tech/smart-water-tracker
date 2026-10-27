@@ -13,10 +13,12 @@ and no external libraries.
 |------|--------------|
 | `register.php` | Creates a new account (full name, email, password, confirm password). Validates everything, checks that the email is unique, and stores the password as a **hash**. |
 | `login.php` | Logs a user in by checking the email and password against the database. Starts a PHP session and regenerates the session ID on success. |
+| `forgot-password.php` | The "Forgot your password?" page. Creates a one-time reset link for the email address that was entered. |
+| `reset-password.php` | Opened from the reset link. Checks the token and lets the user choose a new password. |
 | `index.php` | The dashboard. Shows the welcome message, the daily goal, today's progress bar, quick "add water" buttons, a custom amount box, a change-goal form, today's water history with a delete button per row, and a seven-day summary. |
 | `logout.php` | Destroys the session and sends the user back to the login page. |
 | `database.php` | The one place where the database connection and the main settings live. |
-| `database.sql` | Creates the `smart_water_tracker` database and its two tables. |
+| `database.sql` | Creates the `smart_water_tracker` database and its three tables. |
 | `auth.php` | A small helper file: starts the session, checks login, and provides the CSRF and HTML-escaping functions. |
 | `style.css` | All the styling (blue and white water theme). |
 | `script.js` | Three small interface helpers (see below). |
@@ -28,6 +30,9 @@ and no external libraries.
 * The custom box accepts a whole number of millilitres. It must be between **1 and 5,000 ml**.
 * The daily goal can be set to any whole number between **500 and 10,000 ml**.
 * Passwords must be at least **6 characters** long.
+* A password reset link can be used **once** and expires after **30 minutes**.
+  Because XAMPP has no email server, the link is shown on the page after the email
+  address is entered (see `SHOW_RESET_LINK` in `database.php`).
 * The progress bar stops at 100%, but the amount consumed is always shown in full
   (for example "3,100 ml" with a full bar when the goal is 2,500 ml).
 * Recommendations are general: low intake gets a gentle reminder, half-way or more gets
@@ -47,6 +52,8 @@ C:\xampp\htdocs\smart-water-tracker\
     index.php
     register.php
     login.php
+    forgot-password.php
+    reset-password.php
     logout.php
     database.php
     auth.php
@@ -175,17 +182,24 @@ running and stop it, or change XAMPP's MySQL port in **Config → my.ini** (chan
     "Import has been successfully finished" appears at the top (the number of queries it
     mentions depends on your phpMyAdmin version).
 13. **Verify the tables:** click **smart_water_tracker** in the left sidebar. Under it you
-    should now see exactly two tables: **users** and **water_logs**.
+    should now see exactly three tables: **users**, **water_logs** and **password_resets**.
 
 The import also works if the database does not exist yet: `database.sql` begins with
 `CREATE DATABASE IF NOT EXISTS smart_water_tracker`. If phpMyAdmin says the import
 succeeded but you see no tables, you forgot to select the database in step 8 — select it
 and import again.
 
-> The two tables are:
+> If you imported an **older** version of `database.sql` before the password reset feature
+> was added, just import `database.sql` again. It uses `CREATE TABLE IF NOT EXISTS`, so the
+> existing `users` and `water_logs` tables are kept and the new `password_resets` table is
+> added.
+
+> The three tables are:
 > * `users` — `id`, `name`, `email` (unique), `password` (hash), `daily_goal`
 >   (default 2500), `created_at`
 > * `water_logs` — `id`, `user_id` (foreign key to `users.id`), `amount_ml`, `logged_at`
+> * `password_resets` — `id`, `user_id` (foreign key to `users.id`), `token_hash`,
+>   `expires_at`, `created_at` (only the hash of a reset token is stored, never the token)
 
 ---
 
@@ -205,6 +219,8 @@ and import again.
    C:\xampp\htdocs\smart-water-tracker\index.php
    C:\xampp\htdocs\smart-water-tracker\register.php
    C:\xampp\htdocs\smart-water-tracker\login.php
+   C:\xampp\htdocs\smart-water-tracker\forgot-password.php
+   C:\xampp\htdocs\smart-water-tracker\reset-password.php
    C:\xampp\htdocs\smart-water-tracker\logout.php
    C:\xampp\htdocs\smart-water-tracker\database.php
    C:\xampp\htdocs\smart-water-tracker\auth.php
@@ -254,6 +270,20 @@ zone, for example `'Europe/London'`, `'America/New_York'` or `'Asia/Manila'`.
 A list of valid names is at https://www.php.net/manual/timezones.php. If this value is
 wrong, entries added just after midnight may be counted on the previous day.
 
+### Password reset settings
+
+`database.php` also contains:
+
+```php
+define('RESET_TOKEN_MINUTES', 30);
+define('SHOW_RESET_LINK', true);
+```
+
+* `RESET_TOKEN_MINUTES` — how long a reset link stays valid. 30 minutes is fine.
+* `SHOW_RESET_LINK` — leave this `true`. XAMPP has no mail server, so the reset link is
+  displayed on the page after the email address is entered. Set it to `false` only if you
+  ever send the link by email instead.
+
 ---
 
 ## Step 5: Run the website
@@ -289,7 +319,7 @@ wrong, entries added just after midnight may be counted on the previous day.
 
 ## Step 6: Test all features
 
-Do these ten tests in order. Each one tells you what you should see.
+Do these twelve tests in order. Each one tells you what you should see.
 
 **1. Register a new account**
 1. On the login page click **Create an account**.
@@ -363,6 +393,27 @@ Do these ten tests in order. Each one tells you what you should see.
 2. *Expected result:* you are immediately sent back to the login page and you never see
    the dashboard. (This is the proof that the session protection works.)
 
+**11. Reset a forgotten password**
+1. On the login page click **Forgot your password?** (next to the Password label).
+2. Type the email address of the account you created and click **Create reset link**.
+3. *Expected result:* the green message "If an account exists for that email address, a
+   password reset link has been created..." appears, with a **Reset your password** link
+   under it.
+4. Click that link. Type a new password twice and click **Change password**.
+5. *Expected result:* you are sent to the login page with the green message "Your password
+   has been changed. You can log in with your new password now."
+6. Use a new password that you will remember; after a successful reset the old password
+   no longer works.
+
+**12. Confirm that a reset link can only be used once**
+1. Open the same reset link again (the address is still in your browser history).
+2. *Expected result:* the red message "The link you opened cannot be used." and a
+   **Create a new link** button, because the token was deleted after the reset.
+3. Try to log in with the **old** password.
+   *Expected result:* "Incorrect email address or password."
+4. Log in with the **new** password.
+   *Expected result:* the dashboard opens.
+
 ---
 
 ## Step 7: Verify that MySQL is really storing the data
@@ -388,6 +439,11 @@ Do these ten tests in order. Each one tells you what you should see.
    Add more water on the dashboard, refresh this page, and the new rows appear.
 7. Click the **Structure** tab of `water_logs` to show the foreign key
    `fk_water_logs_user` and the index `idx_water_logs_user_date` in your presentation.
+8. Request a password reset for one of your accounts (test 11), then open the
+   **password_resets** table and click **Browse**.
+   *Expected result:* one row with `user_id`, `token_hash` (a 64-character hexadecimal
+   value) and `expires_at`. The real token from the link is **not** in this table — only
+   its hash — so a copy of the database cannot be used to reset a password.
 
 ---
 
@@ -482,6 +538,21 @@ almost every problem here has a smaller cause.
     switched off. Open `C:\xampp\php\php.ini`, find the line `;extension=mbstring`, remove
     the leading `;`, save, and restart Apache. (XAMPP has it enabled by default.)
 
+### Password reset problems
+* **"The link you opened cannot be used."**
+  * The link has already been used (a link works only once), it is older than 30 minutes,
+    or a newer link was requested afterwards. Go to **Forgot your password?** and create a
+    new link. Old links are deleted on purpose, so only the newest one works.
+* **The "Reset your password" link is missing after requesting a link**
+  * The email address is not in the `users` table, or `SHOW_RESET_LINK` in
+    `database.php` is `false`. The app deliberately shows the same green message for an
+    unknown address, so it cannot be used to find out who has an account. Check the
+    spelling of the email in phpMyAdmin → `users`.
+* **`Table 'smart_water_tracker.password_resets' doesn't exist`**
+  * The database was created with an older `database.sql`. Select
+    `smart_water_tracker` in phpMyAdmin, open **Import**, choose `database.sql` and click
+    **Go**. Your existing accounts and water entries are kept.
+
 ---
 
 ## Step 9: Back up the project
@@ -542,5 +613,10 @@ Whenever you want to continue working or show the project:
   HTML cannot be injected into the page.
 * Water amounts and the daily goal are validated on the server: amounts between 1 and
   5000 ml, goals between 500 and 10000 ml.
+* Password reset tokens are 64 random hexadecimal characters from `random_bytes(32)`.
+  Only their **SHA-256 hash** is stored in `password_resets`, they expire after 30 minutes,
+  they work only once, and requesting a new link deletes the older ones.
+* The forgot-password page always shows the same message, whether the email address exists
+  or not, so it cannot be used to discover who has an account.
 * Database errors are never printed on the page; the visitor sees a simple message
   instead.
