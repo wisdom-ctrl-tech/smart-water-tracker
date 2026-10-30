@@ -4,19 +4,12 @@
 // Shows today's progress, adds water, changes the goal,
 // deletes entries and shows a seven-day summary.
 // ============================================================
-require_once 'auth.php';
-require_once 'database.php';
+require_once 'helpers.php';
 
 require_login();   // logged-out visitors are sent to login.php
 
 $conn    = db();
 $user_id = (int) $_SESSION['user_id'];
-
-/** Remembers a one-time message that is shown after the redirect below. */
-function set_flash(string $text, string $type = 'success'): void
-{
-    $_SESSION['flash'] = ['text' => $text, 'type' => $type];
-}
 
 // ------------------------------------------------------------
 // Handle the three actions that change data (all sent by POST)
@@ -107,13 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ------------------------------------------------------------
 // Read the data we need to display
 // ------------------------------------------------------------
-$message      = '';
-$message_type = 'success';
-if (!empty($_SESSION['flash'])) {
-    $message      = $_SESSION['flash']['text'];
-    $message_type = $_SESSION['flash']['type'];
-    unset($_SESSION['flash']);
-}
+$flash        = take_flash();
+$message      = $flash['text'];
+$message_type = $flash['type'];
 
 // The logged-in user.
 $stmt = $conn->prepare('SELECT name, daily_goal FROM users WHERE id = ? LIMIT 1');
@@ -220,15 +209,11 @@ if ($today_total >= $goal) {
 </head>
 <body>
 
-<header class="topbar">
-    <div class="topbar-inner">
-        <div class="brand">💧 Smart Water Intake Tracker</div>
-        <div class="topbar-user">
-            <span class="hello">Hello, <strong><?php echo e($user['name']); ?></strong></span>
-            <a class="btn btn-ghost" href="logout.php">Log out</a>
-        </div>
-    </div>
-</header>
+<?php
+$user_name   = $user['name'];
+$active_page = 'dashboard';
+include 'topbar.php';
+?>
 
 <main class="container">
 
@@ -278,7 +263,17 @@ if ($today_total >= $goal) {
         <!-- ===== Add water ===== -->
         <section class="card">
             <h2>Add water</h2>
-            <p class="card-hint">Tap a quick amount or type your own.</p>
+            <p class="card-hint">
+                Scan the QR label on your glass or bottle and the amount is logged
+                automatically.
+            </p>
+
+            <div class="scan-cta">
+                <a class="btn btn-primary btn-block" href="scan.php">📷 Scan a container</a>
+                <a class="btn btn-water btn-block" href="containers.php">Manage containers &amp; print QR labels</a>
+            </div>
+
+            <p class="or-separator"><span>or add an amount manually</span></p>
 
             <form method="post" action="index.php" class="quick-buttons">
                 <?php echo csrf_field(); ?>

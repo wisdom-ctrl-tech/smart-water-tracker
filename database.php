@@ -19,6 +19,13 @@ define('DB_CHARSET', 'utf8mb4');            // Character set used by the tables
 // Examples: 'Europe/London', 'America/New_York', 'Asia/Kolkata', 'Australia/Sydney'
 define('APP_TIMEZONE', 'Asia/Kolkata');
 
+// The address that printed QR labels should point to. Leave this empty to use
+// whatever address is in the browser bar. If you open the app on localhost, a
+// phone cannot reach "localhost", so set this to the computer's address on your
+// Wi-Fi network, including the project folder, for example:
+// define('APP_BASE_URL', 'http://192.168.1.10/smart-water-tracker');
+define('APP_BASE_URL', '');
+
 // Limits used to validate the numbers people type in.
 define('MAX_ENTRY_ML', 5000);   // A single water entry may not be bigger than this
 define('MIN_GOAL_ML', 500);     // Smallest daily goal a user may choose

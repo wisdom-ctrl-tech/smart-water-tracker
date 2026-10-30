@@ -8,8 +8,7 @@
 // created. Because XAMPP has no email server, the link is shown
 // on the page (see SHOW_RESET_LINK in database.php).
 // ============================================================
-require_once 'auth.php';
-require_once 'database.php';
+require_once 'helpers.php';
 
 // Somebody who is already logged in does not need this page.
 if (is_logged_in()) {
@@ -29,12 +28,7 @@ $message_type = 'success';
  */
 function reset_link(string $token): string
 {
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-    $folder = str_replace('\\', '/', dirname(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '/'));
-    $folder = rtrim($folder, '/');
-
-    return $scheme . '://' . $host . $folder . '/reset-password.php?token=' . $token;
+    return app_base_url() . 'reset-password.php?token=' . urlencode($token);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

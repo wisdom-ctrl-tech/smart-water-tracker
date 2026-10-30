@@ -1,6 +1,6 @@
 -- ============================================================
 -- database.sql
--- Creates the database and the three tables used by the project.
+-- Creates the database and the four tables used by the project.
 -- Import this file in phpMyAdmin (see the README, Step 3).
 -- ============================================================
 
@@ -43,7 +43,28 @@ CREATE TABLE IF NOT EXISTS `water_logs` (
   COLLATE = utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
--- Table 3: password_resets  (one row per "forgot password" request)
+-- Table 3: containers  (the bottles, glasses and mugs a user can scan)
+-- Each container has a unique code. The QR label printed from
+-- containers.php opens scan.php?code=... and logs its volume.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `containers` (
+  `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`    INT UNSIGNED NOT NULL,
+  `name`       VARCHAR(60)  NOT NULL,
+  `volume_ml`  INT UNSIGNED NOT NULL,
+  `code`       VARCHAR(20)  NOT NULL,
+  `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_containers_code` (`code`),
+  KEY `idx_containers_user` (`user_id`),
+  CONSTRAINT `fk_containers_user`
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Table 4: password_resets  (one row per "forgot password" request)
 -- The real token is never stored: only its SHA-256 hash, so a copy
 -- of this table cannot be used to reset anybody's password.
 -- ------------------------------------------------------------

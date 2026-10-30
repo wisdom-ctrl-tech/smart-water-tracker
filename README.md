@@ -1,7 +1,8 @@
 # 💧 Smart Water Intake Tracker
 
 A simple web app that helps you keep track of how much water you drink each day.
-Set a daily goal, log every glass, and watch your progress fill up.
+Set a daily goal, scan the QR label on your glass or bottle, and watch your progress
+fill up.
 
 No installation is needed to use the app — just open it in your browser, create an
 account, and start tracking.
@@ -12,12 +13,13 @@ account, and start tracking.
 
 1. [What the app does](#what-the-app-does)
 2. [Getting started](#getting-started)
-3. [Using the dashboard](#using-the-dashboard)
-4. [Forgotten password](#forgotten-password)
-5. [Quick reference](#quick-reference)
-6. [Frequently asked questions](#frequently-asked-questions)
-7. [Privacy and security](#privacy-and-security)
-8. [Running the project yourself](#running-the-project-yourself)
+3. [Scanning your containers](#scanning-your-containers)
+4. [Using the dashboard](#using-the-dashboard)
+5. [Forgotten password](#forgotten-password)
+6. [Quick reference](#quick-reference)
+7. [Frequently asked questions](#frequently-asked-questions)
+8. [Privacy and security](#privacy-and-security)
+9. [Running the project yourself](#running-the-project-yourself)
 
 ---
 
@@ -27,8 +29,9 @@ account, and start tracking.
 |---------|-------------------|
 | Personal account | Your own login, daily goal, and water history. |
 | Daily goal | A target you choose, starting at 2,500 ml. |
-| Quick add | One-click buttons for 250 ml, 500 ml and 750 ml. |
-| Custom amount | Type any amount from 1 to 5,000 ml. |
+| QR scan-to-log | Print a label for each container and scan it with a phone camera. The amount is logged without typing. |
+| Container manager | Add and delete the glasses and bottles you use. |
+| Manual fallback | Quick buttons or a typed amount if a label is not handy. |
 | Progress bar | See how much you have drunk today and how much is left. |
 | Daily history | Every entry you logged today, with the time and a delete button. |
 | Seven-day summary | A simple bar chart of the last seven days. |
@@ -50,7 +53,8 @@ at any time.
 4. Click **Register**.
 
 Your password must be at least 6 characters long. When the account is created you are sent
-back to the login page with a green confirmation message.
+back to the login page with a green confirmation message. Every new account also gets two
+containers ready to scan: a **250 ml Glass** and a **750 ml Bottle**.
 
 ### Log in
 
@@ -61,17 +65,61 @@ The dashboard opens with a welcome message and today's date.
 
 ---
 
+## Scanning your containers
+
+Instead of typing how much you drank, you scan a QR label that is stuck on the container.
+
+### Set up your containers
+
+1. On the dashboard, click **Containers** in the top bar.
+2. Check the two containers that were created with your account. If you use other glasses
+   or bottles, add them in **Add a container**: give each one a name and its volume in
+   millilitres, then click **Add container**.
+3. Click **Print labels**. Each label shows a QR code, the container name, its volume, and
+   the code printed underneath.
+4. Cut out the labels and stick one on each glass or bottle. Keep them dry.
+
+The **Containers** page also has a **Log now (test)** button next to each label, which is
+useful for trying the system without a phone.
+
+### Log water with your phone
+
+1. Make sure your phone and the computer running the app are on the same Wi-Fi network.
+2. Open the camera app on your phone.
+3. Point it at the QR label on the container you just used.
+4. Tap the link that appears on the phone screen.
+5. The app logs that container's volume. If you are not logged in on the phone yet, log in
+   first and the scan is completed automatically.
+
+If the phone cannot open the link, the labels were probably printed while the app was open
+at `localhost`. See [Running the project yourself](#running-the-project-yourself) for the
+one-time setup that fixes this.
+
+### Log water without a phone
+
+Open **Scan** in the top bar and either:
+
+* tap one of your containers under **Your containers**, or
+* type the code printed under a label into **Container code** and click **Log it**.
+
+The dashboard also keeps the old quick buttons and the **Custom amount** box as a fallback
+for when a label is not nearby.
+
+---
+
 ## Using the dashboard
 
 The dashboard is the main screen. It is made up of five cards.
 
 ### Add water
 
-Use the **Add water** card whenever you drink something:
+The **Add water** card is the starting point for every entry:
 
-* Click **+ 250 ml**, **+ 500 ml** or **+ 750 ml** for a quick entry.
-* Or type an amount in **Custom amount (ml)** and click **Add**. The amount must be a
-  whole number between 1 and 5,000 ml.
+* Click **Scan a container** to open the scan page.
+* Click **Manage containers & print QR labels** to add containers or print their labels.
+* If a label is not handy, use **+ 250 ml**, **+ 500 ml** or **+ 750 ml**, or type an
+  amount in **Custom amount (ml)** and click **Add**. A manual amount must be a whole
+  number between 1 and 5,000 ml.
 
 A green message confirms every entry, and the totals update immediately.
 
@@ -145,8 +193,11 @@ Important things to know:
 |------|-------|
 | Default daily goal | 2,500 ml |
 | Allowed daily goal | 500 – 10,000 ml |
+| Default containers | Glass 250 ml, Bottle 750 ml |
+| Container volume | 1 – 5,000 ml |
+| Label code format | `SWT-` followed by 8 characters |
 | Quick add buttons | 250 ml, 500 ml, 750 ml |
-| Custom entry | 1 – 5,000 ml |
+| Manual entry | 1 – 5,000 ml |
 | Minimum password length | 6 characters |
 | Reset link lifetime | 30 minutes, single use |
 | History shown in detail | Today only |
@@ -182,6 +233,30 @@ times only shows today.
 **Can I use the app on my phone?**
 Yes. The layout adjusts to smaller screens, so you can use it in your phone's browser.
 
+**How do I log water without typing?**
+Print a QR label for each container from the **Containers** page, stick it on the
+container, and scan it with your phone camera. The container's volume is logged
+automatically. See [Scanning your containers](#scanning-your-containers).
+
+**The QR link will not open on my phone.**
+The labels were probably printed while the app was open at `localhost`, which a phone
+cannot reach. Open the **Containers** page using the computer's Wi-Fi address (for example
+`http://192.168.1.10/smart-water-tracker/containers.php`) and print again, or set
+`APP_BASE_URL` in `database.php` to that address first. Also check that the phone and the
+computer are on the same Wi-Fi network.
+
+**The scan page says the code does not belong to me.**
+Each label only works for the account that created it. Make sure you are logged in as the
+right user, and check that the code under the label matches the one on the **Containers**
+page.
+
+**I lost or damaged a label.**
+Open the **Containers** page and print the labels again. You can also write the code down:
+typing it into the **Scan** page logs the same amount.
+
+**Can I use the same container more than once?**
+Yes. A label is not used up. Scan the same glass or bottle every time you drink from it.
+
 **Does my goal affect anyone else?**
 No. Every account has its own goal, its own entries, and its own history.
 
@@ -194,6 +269,9 @@ So that one accidental tap does not remove a water entry. Click **OK** to delete
 ## Privacy and security
 
 * Each account can only see, add, and delete **its own** water entries.
+* Each container code belongs to one account. Scanning another user's label does not work.
+* QR labels contain only the app address and the container code — never your password or
+  personal details.
 * Passwords are stored as one-way hashes, never as plain text. Nobody — including whoever
   runs the site — can read your password from the database.
 * Water amounts and goals are checked on the server, so invalid values are rejected.
@@ -216,13 +294,36 @@ This section is for whoever hosts the app on their own computer.
 
 2. Start **Apache** and **MySQL** in the XAMPP Control Panel.
 3. Open <http://localhost/phpmyadmin/> and import `database.sql`. This creates the
-   `smart_water_tracker` database and its three tables.
+   `smart_water_tracker` database and its four tables (`users`, `water_logs`,
+   `containers`, `password_resets`). If you already had the app installed, importing it
+   again adds the new `containers` table without deleting your accounts or water entries.
 4. Check the connection settings at the top of `database.php`. On a default XAMPP install,
    the username is `root` and the password is empty.
 5. Open <http://localhost/smart-water-tracker/> in your browser.
 
 If Apache uses port 8080, add it to the address:
 <http://localhost:8080/smart-water-tracker/>.
+
+### Making the QR labels work on a phone
+
+A phone cannot open `localhost`, because that means "this phone". The labels therefore need
+the computer's address on the local Wi-Fi network.
+
+1. On the computer, open a Command Prompt and run `ipconfig`. Note the **IPv4 Address** of
+   the Wi-Fi adapter, for example `192.168.1.10`.
+2. Make sure the phone is connected to the same Wi-Fi network.
+3. Either:
+   * open the app on the computer as
+     `http://192.168.1.10/smart-water-tracker/containers.php` and print the labels, or
+   * open `database.php`, set
+     `define('APP_BASE_URL', 'http://192.168.1.10/smart-water-tracker');`
+     and keep using `localhost` on the computer. The labels will then always use the
+     Wi-Fi address.
+4. If the phone still cannot connect, allow Apache through the Windows Firewall when
+   Windows asks.
+
+You can check the address the labels will use on the **Containers** page, just above the
+labels. It also shows a warning when the labels point at `localhost`.
 
 A longer installation and troubleshooting guide is kept separately with the project
 handover notes.

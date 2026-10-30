@@ -3,11 +3,13 @@
    Small interface helpers. No libraries are used.
    ============================================================ */
 
-// 1. Ask before deleting a water entry.
+// 1. Ask before deleting a water entry or a container.
+//    A form can set data-confirm to use its own question.
 var deleteForms = document.querySelectorAll('.delete-form');
 for (var i = 0; i < deleteForms.length; i++) {
     deleteForms[i].addEventListener('submit', function (event) {
-        if (!window.confirm('Delete this water entry?')) {
+        var question = this.getAttribute('data-confirm') || 'Delete this water entry?';
+        if (!window.confirm(question)) {
             event.preventDefault();
         }
     });

@@ -2,8 +2,7 @@
 // ============================================================
 // register.php  -  Create a new account
 // ============================================================
-require_once 'auth.php';
-require_once 'database.php';
+require_once 'helpers.php';
 
 // Somebody who is already logged in does not need this page.
 if (is_logged_in()) {
@@ -66,9 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('sss', $name, $email, $hash);
 
             if ($stmt->execute()) {
+                $new_user_id = (int) $conn->insert_id;
                 $stmt->close();
+
+                // Every new account starts with two ready-to-scan containers.
+                create_container($conn, $new_user_id, 'Glass', 250);
+                create_container($conn, $new_user_id, 'Bottle', 750);
+
+                // A scan made before registering belonged to another account.
+                unset($_SESSION['pending_scan_code']);
+
                 $_SESSION['flash'] = [
-                    'text' => 'Your account was created successfully. You can log in now.',
+                    'text' => 'Your account was created successfully. You can log in now. '
+                        . 'A 250 ml glass and a 750 ml bottle are ready to scan.',
                     'type' => 'success',
                 ];
                 header('Location: login.php');
