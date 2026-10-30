@@ -232,10 +232,12 @@ if ($today_total >= $goal) {
 
 <main class="container">
 
-    <h1 class="welcome">
-        Welcome back, <?php echo e($user['name']); ?>!
-    </h1>
-    <p class="welcome-sub">Here is your water intake for today (<?php echo e(date('l, d M Y')); ?>).</p>
+    <section class="welcome-hero">
+        <h1 class="welcome">
+            Welcome back, <?php echo e($user['name']); ?>!
+        </h1>
+        <p class="welcome-sub">Here is your water intake for today (<?php echo e(date('l, d M Y')); ?>).</p>
+    </section>
 
     <?php if ($message !== ''): ?>
         <div id="flash-message"

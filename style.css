@@ -31,7 +31,10 @@ body {
     font-size: 16px;
     line-height: 1.5;
     color: var(--text);
-    background: linear-gradient(180deg, var(--blue-light) 0%, #ffffff 320px);
+    background:
+        linear-gradient(180deg, rgba(232, 243, 253, 0.78) 0%, rgba(255, 255, 255, 0.88) 460px),
+        url('assets/water-dashboard.jpg') center / cover no-repeat fixed;
+    background-color: var(--blue-lighter);
     min-height: 100vh;
 }
 
@@ -171,7 +174,10 @@ a {
     align-items: center;
     justify-content: center;
     padding: 32px 16px;
-    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue) 55%, #7fc4f5 100%);
+    background:
+        linear-gradient(160deg, rgba(6, 46, 82, 0.82) 0%, rgba(29, 127, 212, 0.62) 55%, rgba(127, 196, 245, 0.45) 100%),
+        url('assets/water-auth.jpg') center / cover no-repeat fixed;
+    background-color: var(--blue-dark);
 }
 
 .auth-box {
@@ -263,7 +269,9 @@ a {
 /* ---------------- Dashboard layout ---------------- */
 
 .topbar {
-    background: var(--blue-dark);
+    background:
+        linear-gradient(90deg, rgba(11, 79, 138, 0.90) 0%, rgba(29, 127, 212, 0.70) 100%),
+        url('assets/water-dashboard.jpg') center 30% / cover no-repeat;
     color: #ffffff;
     box-shadow: var(--shadow);
 }
@@ -309,6 +317,25 @@ a {
     color: var(--text-soft);
     margin: 0 0 20px;
     font-size: 0.95rem;
+}
+
+.welcome-hero {
+    background:
+        linear-gradient(100deg, rgba(6, 46, 82, 0.86) 0%, rgba(29, 127, 212, 0.55) 60%, rgba(29, 127, 212, 0.25) 100%),
+        url('assets/water-hero.jpg') center 55% / cover no-repeat;
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.welcome-hero .welcome {
+    color: #ffffff;
+}
+
+.welcome-hero .welcome-sub {
+    color: rgba(255, 255, 255, 0.88);
+    margin-bottom: 0;
 }
 
 .grid {
