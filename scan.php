@@ -5,8 +5,7 @@
 // A QR label contains a link like:
 //   http://192.168.1.10/smart-water-tracker/scan.php?code=SWT-1A2B3C4D
 // Opening that link (from a phone camera) logs the container's
-// volume. The same page also offers an in-page camera scanner and
-// a manual code box as fallbacks.
+// volume. The same page also offers a manual code box as a fallback.
 // ============================================================
 require_once 'helpers.php';
 
@@ -133,30 +132,12 @@ $active_page = 'scan';
             </ol>
             <p class="card-note">
                 Your phone and this computer must be on the same Wi-Fi network.
-                If the label does not open, print it again from the
-                <a href="containers.php">Containers</a> page using the computer's
-                Wi-Fi address instead of <code>localhost</code>.
             </p>
         </section>
 
-        <!-- ===== Camera + manual code ===== -->
+        <!-- ===== Manual code ===== -->
         <section class="card">
             <h2>Scan on this device</h2>
-            <p class="card-hint">
-                This works on <code>localhost</code> or HTTPS. On a phone over
-                plain Wi-Fi, use the phone's own camera app instead.
-            </p>
-
-            <div class="scanner">
-                <video id="scanner-video" class="scanner-video" playsinline muted hidden></video>
-                <p id="scanner-status" class="scanner-status"></p>
-                <div class="scanner-actions">
-                    <button type="button" class="btn btn-primary" id="start-camera">Start camera</button>
-                    <button type="button" class="btn btn-water" id="stop-camera" hidden>Stop camera</button>
-                </div>
-            </div>
-
-            <p class="or-separator"><span>or type the code</span></p>
 
             <form method="post" action="scan.php" class="custom-form">
                 <?php echo csrf_field(); ?>
@@ -181,8 +162,7 @@ $active_page = 'scan';
                 </p>
             <?php else: ?>
                 <p class="card-hint">
-                    Tap a container to log it now. This is handy for testing
-                    without a phone.
+                    Tap a container to log it now.
                 </p>
 
                 <div class="container-quick">
@@ -208,107 +188,6 @@ $active_page = 'scan';
     </div>
 </main>
 
-<script>
-    // Optional in-page scanner. It uses the BarcodeDetector API, which is
-    // available in Chrome/Edge on localhost or HTTPS. When it is not
-    // available the manual code box above still works.
-    (function () {
-        var startButton = document.getElementById('start-camera');
-        var stopButton  = document.getElementById('stop-camera');
-        var video       = document.getElementById('scanner-video');
-        var status      = document.getElementById('scanner-status');
-
-        if (!startButton || !stopButton || !video || !status) {
-            return;
-        }
-
-        var stream   = null;
-        var timer    = null;
-        var detector = null;
-
-        function setStatus(text) {
-            status.textContent = text;
-        }
-
-        // Hide the button when this browser cannot use the camera directly,
-        // for example on a phone opening the app over plain HTTP.
-        var canScanHere = ('BarcodeDetector' in window)
-            && navigator.mediaDevices
-            && typeof navigator.mediaDevices.getUserMedia === 'function';
-
-        if (!canScanHere) {
-            startButton.hidden = true;
-            setStatus('This browser cannot use the camera directly. Use your phone camera or the code box below.');
-        }
-
-        function stopCamera() {
-            if (timer !== null) {
-                window.clearInterval(timer);
-                timer = null;
-            }
-            if (stream !== null) {
-                var tracks = stream.getTracks();
-                for (var i = 0; i < tracks.length; i++) {
-                    tracks[i].stop();
-                }
-                stream = null;
-            }
-            video.srcObject = null;
-            video.hidden = true;
-            startButton.hidden = false;
-            stopButton.hidden = true;
-            setStatus('');
-        }
-
-        startButton.addEventListener('click', function () {
-            if (!('BarcodeDetector' in window)) {
-                setStatus('This browser cannot scan QR codes directly. Use the code box below.');
-                return;
-            }
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                setStatus('The camera is not available. Use the code box below.');
-                return;
-            }
-
-            try {
-                detector = new BarcodeDetector({ formats: ['qr_code'] });
-            } catch (error) {
-                setStatus('This browser cannot scan QR codes directly. Use the code box below.');
-                return;
-            }
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(function (mediaStream) {
-                    stream = mediaStream;
-                    video.srcObject = stream;
-                    video.hidden = false;
-                    return video.play();
-                })
-                .then(function () {
-                    startButton.hidden = true;
-                    stopButton.hidden = false;
-                    setStatus('Point the camera at a container QR code.');
-
-                    timer = window.setInterval(function () {
-                        detector.detect(video).then(function (codes) {
-                            if (codes.length > 0 && codes[0].rawValue) {
-                                var value = codes[0].rawValue;
-                                stopCamera();
-                                window.location.href = 'scan.php?code=' + encodeURIComponent(value);
-                            }
-                        }).catch(function () {
-                            // Ignore a bad frame and try the next one.
-                        });
-                    }, 500);
-                })
-                .catch(function () {
-                    setStatus('The camera could not be started. Use the code box below.');
-                });
-        });
-
-        stopButton.addEventListener('click', stopCamera);
-    })();
-</script>
 <script src="script.js"></script>
 </body>
 </html>

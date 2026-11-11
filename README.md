@@ -91,9 +91,9 @@ useful for trying the system without a phone.
 5. The app logs that container's volume. If you are not logged in on the phone yet, log in
    first and the scan is completed automatically.
 
-If the phone cannot open the link, the labels were probably printed while the app was open
-at `localhost`. See [Running the project yourself](#running-the-project-yourself) for the
-one-time setup that fixes this.
+If the phone cannot open the link, check that `APP_BASE_URL` in `database.php` matches the
+computer's current Wi-Fi address. See
+[Making the QR labels work on a phone](#making-the-qr-labels-work-on-a-phone).
 
 ### Log water without a phone
 
@@ -239,11 +239,10 @@ container, and scan it with your phone camera. The container's volume is logged
 automatically. See [Scanning your containers](#scanning-your-containers).
 
 **The QR link will not open on my phone.**
-The labels were probably printed while the app was open at `localhost`, which a phone
-cannot reach. Open the **Containers** page using the computer's Wi-Fi address (for example
-`http://192.168.1.10/smart-water-tracker/containers.php`) and print again, or set
-`APP_BASE_URL` in `database.php` to that address first. Also check that the phone and the
-computer are on the same Wi-Fi network.
+Check that `APP_BASE_URL` in `database.php` matches the computer's current Wi-Fi address,
+and that the phone and the computer are on the same Wi-Fi network. The **Containers** page
+shows the address the labels will use. If the address changed, update `APP_BASE_URL` and
+print the labels again.
 
 **The scan page says the code does not belong to me.**
 Each label only works for the account that created it. Make sure you are logged in as the
@@ -306,24 +305,18 @@ If Apache uses port 8080, add it to the address:
 
 ### Making the QR labels work on a phone
 
-A phone cannot open `localhost`, because that means "this phone". The labels therefore need
-the computer's address on the local Wi-Fi network.
+The project is already set to use `http://192.168.1.66/smart-water-tracker` for its QR
+labels. This is the computer's Wi-Fi address on the local network.
 
-1. On the computer, open a Command Prompt and run `ipconfig`. Note the **IPv4 Address** of
-   the Wi-Fi adapter, for example `192.168.1.10`.
-2. Make sure the phone is connected to the same Wi-Fi network.
-3. Either:
-   * open the app on the computer as
-     `http://192.168.1.10/smart-water-tracker/containers.php` and print the labels, or
-   * open `database.php`, set
-     `define('APP_BASE_URL', 'http://192.168.1.10/smart-water-tracker');`
-     and keep using `localhost` on the computer. The labels will then always use the
-     Wi-Fi address.
-4. If the phone still cannot connect, allow Apache through the Windows Firewall when
+1. Make sure the phone is connected to the same Wi-Fi network as the computer.
+2. If the computer's Wi-Fi address changes, open `database.php` and update
+   `APP_BASE_URL` to the new address (run `ipconfig` to find it), then print the labels
+   again.
+3. If the phone still cannot connect, allow Apache through the Windows Firewall when
    Windows asks.
 
 You can check the address the labels will use on the **Containers** page, just above the
-labels. It also shows a warning when the labels point at `localhost`.
+labels.
 
 A longer installation and troubleshooting guide is kept separately with the project
 handover notes.

@@ -31,15 +31,6 @@ function app_base_url(): string
     return $scheme . '://' . $host . $folder . '/';
 }
 
-/** True when the app is opened through localhost, which a phone cannot reach. */
-function app_is_local_host(): bool
-{
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-    $host = strtolower(preg_replace('/:\d+$/', '', $host));
-
-    return in_array($host, ['localhost', '127.0.0.1', '[::1]'], true);
-}
-
 /** Remembers a one-time message that is shown after the next redirect. */
 function set_flash(string $text, string $type = 'success'): void
 {

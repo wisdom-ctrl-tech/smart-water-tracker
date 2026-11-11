@@ -93,9 +93,6 @@ $stmt->execute();
 $containers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// A phone cannot open "localhost", so warn when the labels would point there.
-$show_lan_warning = app_is_local_host() && APP_BASE_URL === '';
-
 $user_name   = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'there';
 $active_page = 'containers';
 ?>
@@ -183,16 +180,6 @@ $active_page = 'containers';
             opens the app and logs the container's volume.
             Labels point to <code><?php echo e(app_base_url()); ?></code>.
         </p>
-
-        <?php if ($show_lan_warning): ?>
-            <div class="notice no-print">
-                <strong>Phones cannot open "localhost".</strong>
-                Open this page using your computer's Wi-Fi address (for example
-                <code>http://192.168.1.10/smart-water-tracker/containers.php</code>)
-                before printing, or set <code>APP_BASE_URL</code> in
-                <code>database.php</code> to that address. Then print the labels again.
-            </div>
-        <?php endif; ?>
 
         <?php if (empty($containers)): ?>
             <p class="empty">You have no containers yet. Add one above to create its QR label.</p>
