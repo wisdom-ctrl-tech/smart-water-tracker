@@ -1,8 +1,8 @@
 <?php
 // ============================================================
 // index.php  -  The dashboard (only for logged-in users)
-// Shows today's progress, adds water, changes the goal,
-// deletes entries and shows a seven-day summary.
+// Shows today's progress, changes the goal, deletes entries
+// and shows a seven-day summary.
 // ============================================================
 require_once 'helpers.php';
 
@@ -12,44 +12,12 @@ $conn    = db();
 $user_id = (int) $_SESSION['user_id'];
 
 // ------------------------------------------------------------
-// Handle the three actions that change data (all sent by POST)
+// Handle the two actions that change data (all sent by POST)
 // ------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_check()) {
-        set_flash('Your session expired. Please reload the page and try again.', 'error');
-        header('Location: index.php');
-        exit;
-    }
-
     $action = isset($_POST['action']) ? $_POST['action'] : '';
 
-    // ---- 1. Add a water entry -------------------------------------------
-    if ($action === 'add') {
-        $amount = trim(isset($_POST['amount_ml']) ? $_POST['amount_ml'] : '');
-
-        // Whole numbers only, bigger than zero and not unreasonably large.
-        if (!is_numeric($amount) || (int) $amount != (float) $amount
-            || (int) $amount <= 0 || (int) $amount > MAX_ENTRY_ML) {
-            set_flash('Please enter a whole number of millilitres between 1 and '
-                . MAX_ENTRY_ML . '.', 'error');
-        } else {
-            $amount = (int) $amount;
-            $now    = date('Y-m-d H:i:s');
-
-            $stmt = $conn->prepare('INSERT INTO water_logs (user_id, amount_ml, logged_at) VALUES (?, ?, ?)');
-            $stmt->bind_param('iis', $user_id, $amount, $now);
-            $saved = $stmt->execute();
-            $stmt->close();
-
-            if ($saved) {
-                set_flash('Added ' . number_format($amount) . ' ml of water. Keep it up!');
-            } else {
-                set_flash('Sorry, that entry could not be saved. Please try again.', 'error');
-            }
-        }
-    }
-
-    // ---- 2. Delete one of today's entries -------------------------------
+    // ---- 1. Delete one of today's entries -------------------------------
     if ($action === 'delete') {
         $log_id = isset($_POST['log_id']) ? (int) $_POST['log_id'] : 0;
 
@@ -71,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ---- 3. Change the daily goal ---------------------------------------
+    // ---- 2. Change the daily goal ---------------------------------------
     if ($action === 'goal') {
         $goal = trim(isset($_POST['daily_goal']) ? $_POST['daily_goal'] : '');
 
@@ -260,9 +228,9 @@ include 'topbar.php';
             <p class="tip <?php echo $tip_class; ?>"><?php echo e($tip); ?></p>
         </section>
 
-        <!-- ===== Add water ===== -->
+        <!-- ===== Log water ===== -->
         <section class="card">
-            <h2>Add water</h2>
+            <h2>Log water</h2>
             <p class="card-hint">
                 Scan the QR label on your glass or bottle and the amount is logged
                 automatically.
@@ -273,27 +241,10 @@ include 'topbar.php';
                 <a class="btn btn-water btn-block" href="containers.php">Manage containers &amp; print QR labels</a>
             </div>
 
-            <p class="or-separator"><span>or add an amount manually</span></p>
-
-            <form method="post" action="index.php" class="quick-buttons">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="action" value="add">
-                <button type="submit" name="amount_ml" value="250" class="btn btn-water">+ 250 ml</button>
-                <button type="submit" name="amount_ml" value="500" class="btn btn-water">+ 500 ml</button>
-                <button type="submit" name="amount_ml" value="750" class="btn btn-water">+ 750 ml</button>
-            </form>
-
-            <form method="post" action="index.php" class="custom-form">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="action" value="add">
-                <label for="amount_ml">Custom amount (ml)</label>
-                <div class="inline-fields">
-                    <input type="number" id="amount_ml" name="amount_ml" min="1"
-                           max="<?php echo MAX_ENTRY_ML; ?>" step="1"
-                           placeholder="e.g. 300" required>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
-            </form>
+            <p class="card-note">
+                No phone? Open the <a href="scan.php">Scan</a> page and type the
+                code printed under the label.
+            </p>
         </section>
 
         <!-- ===== Daily goal ===== -->
@@ -304,7 +255,6 @@ include 'topbar.php';
             </p>
 
             <form method="post" action="index.php" class="custom-form">
-                <?php echo csrf_field(); ?>
                 <input type="hidden" name="action" value="goal">
                 <label for="daily_goal">Change your goal (ml)</label>
                 <div class="inline-fields">
@@ -346,7 +296,6 @@ include 'topbar.php';
                                 <td><?php echo e(date('h:i A', strtotime($entry['logged_at']))); ?></td>
                                 <td class="right">
                                     <form method="post" action="index.php" class="delete-form">
-                                        <?php echo csrf_field(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="log_id"
                                                value="<?php echo (int) $entry['id']; ?>">

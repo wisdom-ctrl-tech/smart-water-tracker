@@ -31,7 +31,7 @@ account, and start tracking.
 | Daily goal | A target you choose, starting at 2,500 ml. |
 | QR scan-to-log | Print a label for each container and scan it with a phone camera. The amount is logged without typing. |
 | Container manager | Add and delete the glasses and bottles you use. |
-| Manual fallback | Quick buttons or a typed amount if a label is not handy. |
+| Manual fallback | Tap a container or type the printed code if a label is not handy. |
 | Progress bar | See how much you have drunk today and how much is left. |
 | Daily history | Every entry you logged today, with the time and a delete button. |
 | Seven-day summary | A simple bar chart of the last seven days. |
@@ -79,8 +79,8 @@ Instead of typing how much you drank, you scan a QR label that is stuck on the c
    the code printed underneath.
 4. Cut out the labels and stick one on each glass or bottle. Keep them dry.
 
-The **Containers** page also has a **Log now (test)** button next to each label, which is
-useful for trying the system without a phone.
+The **Containers** page also has a **Log now** button next to each label, which is useful
+for trying the system without a phone.
 
 ### Log water with your phone
 
@@ -89,7 +89,7 @@ useful for trying the system without a phone.
 3. Point it at the QR label on the container you just used.
 4. Tap the link that appears on the phone screen.
 5. The app logs that container's volume. If you are not logged in on the phone yet, log in
-   first and the scan is completed automatically.
+   first and then scan the label again.
 
 If the phone cannot open the link, check that `APP_BASE_URL` in `database.php` matches the
 computer's current Wi-Fi address. See
@@ -102,8 +102,7 @@ Open **Scan** in the top bar and either:
 * tap one of your containers under **Your containers**, or
 * type the code printed under a label into **Container code** and click **Log it**.
 
-The dashboard also keeps the old quick buttons and the **Custom amount** box as a fallback
-for when a label is not nearby.
+Both options log the container's volume, so you never have to type an amount.
 
 ---
 
@@ -111,15 +110,13 @@ for when a label is not nearby.
 
 The dashboard is the main screen. It is made up of five cards.
 
-### Add water
+### Log water
 
-The **Add water** card is the starting point for every entry:
+The **Log water** card is the starting point for every entry:
 
 * Click **Scan a container** to open the scan page.
 * Click **Manage containers & print QR labels** to add containers or print their labels.
-* If a label is not handy, use **+ 250 ml**, **+ 500 ml** or **+ 750 ml**, or type an
-  amount in **Custom amount (ml)** and click **Add**. A manual amount must be a whole
-  number between 1 and 5,000 ml.
+* If a label is not handy, open the **Scan** page and type the code printed under the label.
 
 A green message confirms every entry, and the totals update immediately.
 
@@ -153,7 +150,7 @@ amount, the time, and a **Delete** button.
 
 * Click **Delete** on a row to remove that entry.
 * A pop-up asks you to confirm first; click **Cancel** and nothing is deleted.
-* You cannot edit an entry. If you typed the wrong amount, delete it and add the correct
+* You cannot edit an entry. If you logged the wrong amount, delete it and log the correct
   one.
 
 ### Last 7 days
@@ -182,8 +179,7 @@ Important things to know:
 * The link can be used **once** and expires after **30 minutes**.
 * Requesting a new link cancels any older links.
 * After a successful reset, your old password no longer works.
-* The page shows the same confirmation whether or not the email address is registered, so
-  nobody can use it to find out who has an account.
+* The reset link is shown on the page because XAMPP has no email server.
 
 ---
 
@@ -196,8 +192,7 @@ Important things to know:
 | Default containers | Glass 250 ml, Bottle 750 ml |
 | Container volume | 1 – 5,000 ml |
 | Label code format | `SWT-` followed by 8 characters |
-| Quick add buttons | 250 ml, 500 ml, 750 ml |
-| Manual entry | 1 – 5,000 ml |
+| Manual fallback | Container buttons or the printed code |
 | Minimum password length | 6 characters |
 | Reset link lifetime | 30 minutes, single use |
 | History shown in detail | Today only |
@@ -215,8 +210,8 @@ The link has expired, has already been used, or a newer link was requested. Crea
 one from the login page.
 
 **I entered my email but no reset link appeared.**
-Check that you typed the same email address you registered with. If you still see no link,
-the address is not registered — try creating a new account.
+Check that you typed the same email address you registered with. If the address is not
+registered, the page says so — try creating a new account.
 
 **The progress bar is full but my total is bigger than my goal.**
 That is normal. The bar stops at 100%, but the amount you actually drank is always shown in
@@ -224,7 +219,7 @@ full.
 
 **Can I change or delete an entry?**
 You can delete any of today's entries from the history card. Entries cannot be edited, so
-delete the wrong one and add the correct amount.
+delete the wrong one and log the correct amount.
 
 **Can I see my history from previous days?**
 The **Last 7 days** chart shows your daily totals for the past week. The detailed list with
@@ -274,8 +269,8 @@ So that one accidental tap does not remove a water entry. Click **OK** to delete
 * Passwords are stored as one-way hashes, never as plain text. Nobody — including whoever
   runs the site — can read your password from the database.
 * Water amounts and goals are checked on the server, so invalid values are rejected.
-* Forms are protected against cross-site request forgery, and anything you type is escaped
-  before it is displayed.
+* Password-reset links are random, single-use, and expire after 30 minutes.
+* Anything you type is escaped before it is displayed, so it cannot inject HTML.
 
 ---
 
@@ -293,9 +288,9 @@ This section is for whoever hosts the app on their own computer.
 
 2. Start **Apache** and **MySQL** in the XAMPP Control Panel.
 3. Open <http://localhost/phpmyadmin/> and import `database.sql`. This creates the
-   `smart_water_tracker` database and its four tables (`users`, `water_logs`,
-   `containers`, `password_resets`). If you already had the app installed, importing it
-   again adds the new `containers` table without deleting your accounts or water entries.
+   `smart_water_tracker` database and its three tables (`users`, `water_logs`, and
+   `containers`). If you already have an older copy, keep your data and add the
+   `reset_token` and `reset_expires_at` columns to `users`.
 4. Check the connection settings at the top of `database.php`. On a default XAMPP install,
    the username is `root` and the password is empty.
 5. Open <http://localhost/smart-water-tracker/> in your browser.

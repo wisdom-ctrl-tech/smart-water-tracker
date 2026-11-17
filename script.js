@@ -25,12 +25,3 @@ if (flash) {
         }, 700);
     }, 5000);
 }
-
-// 3. Show a little feedback on the quick amount button that was clicked.
-var quickButtons = document.querySelectorAll('.quick-buttons .btn');
-for (var j = 0; j < quickButtons.length; j++) {
-    quickButtons[j].addEventListener('click', function () {
-        // The text changes only for a moment: the form is submitted straight after.
-        this.textContent = 'Adding...';
-    });
-}

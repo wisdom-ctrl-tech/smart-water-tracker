@@ -1,6 +1,6 @@
 -- ============================================================
 -- database.sql
--- Creates the database and the four tables used by the project.
+-- Creates the database and the three tables used by the project.
 -- Import this file in phpMyAdmin (see the README, Step 3).
 -- ============================================================
 
@@ -12,16 +12,22 @@ USE `smart_water_tracker`;
 
 -- ------------------------------------------------------------
 -- Table 1: users  (one row per registered account)
+-- reset_token is the SHA-256 hash of the password-reset link
+-- token (NULL when unused). Saving a new token overwrites the
+-- old one, so only the newest reset link works.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `users` (
-  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name`        VARCHAR(100) NOT NULL,
-  `email`       VARCHAR(190) NOT NULL,
-  `password`    VARCHAR(255) NOT NULL,
-  `daily_goal`  INT UNSIGNED NOT NULL DEFAULT 2500,
-  `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name`             VARCHAR(100) NOT NULL,
+  `email`            VARCHAR(190) NOT NULL,
+  `password`         VARCHAR(255) NOT NULL,
+  `daily_goal`       INT UNSIGNED NOT NULL DEFAULT 2500,
+  `reset_token`      CHAR(64)     DEFAULT NULL,
+  `reset_expires_at` DATETIME     DEFAULT NULL,
+  `created_at`       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_users_email` (`email`)
+  UNIQUE KEY `uniq_users_email` (`email`),
+  KEY `idx_users_reset_token` (`reset_token`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -63,22 +69,4 @@ CREATE TABLE IF NOT EXISTS `containers` (
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- ------------------------------------------------------------
--- Table 4: password_resets  (one row per "forgot password" request)
--- The real token is never stored: only its SHA-256 hash, so a copy
--- of this table cannot be used to reset anybody's password.
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `password_resets` (
-  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id`     INT UNSIGNED NOT NULL,
-  `token_hash`  CHAR(64)     NOT NULL,
-  `expires_at`  DATETIME     NOT NULL,
-  `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_password_resets_token` (`token_hash`),
-  KEY `idx_password_resets_user` (`user_id`),
-  CONSTRAINT `fk_password_resets_user`
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+

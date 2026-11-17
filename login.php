@@ -2,8 +2,7 @@
 // ============================================================
 // login.php  -  Log an existing user in
 // ============================================================
-require_once 'auth.php';
-require_once 'database.php';
+require_once 'helpers.php';
 
 // Already logged in? Go straight to the dashboard.
 if (is_logged_in()) {
@@ -11,29 +10,19 @@ if (is_logged_in()) {
     exit;
 }
 
-$conn          = db();
-$errors        = [];
-$email         = '';
-$message       = '';
-$message_type  = 'success';
+$conn   = db();
+$errors = [];
+$email  = '';
 
-// Set by scan.php when somebody scanned a container while logged out.
-$pending_scan  = !empty($_SESSION['pending_scan_code']);
-
-// A message left by register.php, logout.php or reset-password.php.
-if (!empty($_SESSION['flash'])) {
-    $message      = $_SESSION['flash']['text'];
-    $message_type = isset($_SESSION['flash']['type']) ? $_SESSION['flash']['type'] : 'success';
-    unset($_SESSION['flash']);
-}
+// A message left by register.php or reset-password.php.
+$flash        = take_flash();
+$message      = $flash['text'];
+$message_type = $flash['type'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
     $pass  = isset($_POST['password']) ? $_POST['password'] : '';
 
-    if (!csrf_check()) {
-        $errors[] = 'Your session expired. Please try again.';
-    }
     if ($email === '' || $pass === '') {
         $errors[] = 'Please enter both your email address and your password.';
     }
@@ -48,18 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Same message whether the email or the password was wrong.
         if ($user && password_verify($pass, $user['password'])) {
             session_regenerate_id(true);              // new session id after login
-            $_SESSION['user_id']    = (int) $user['id'];
-            $_SESSION['user_name']  = $user['name'];
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // fresh token
-
-            // If the user scanned a container before logging in, finish that
-            // scan now instead of dropping it.
-            if (!empty($_SESSION['pending_scan_code'])) {
-                $pending = $_SESSION['pending_scan_code'];
-                unset($_SESSION['pending_scan_code']);
-                header('Location: scan.php?code=' . urlencode($pending));
-                exit;
-            }
+            $_SESSION['user_id']   = (int) $user['id'];
+            $_SESSION['user_name'] = $user['name'];
 
             header('Location: index.php');
             exit;
@@ -84,12 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1 class="auth-title">Smart Water Intake Tracker</h1>
     <p class="auth-subtitle">Log in to your account</p>
 
-    <?php if ($pending_scan): ?>
-        <div class="message message-info">
-            Log in to record the container you just scanned.
-        </div>
-    <?php endif; ?>
-
     <?php if ($message !== ''): ?>
         <div class="message <?php echo $message_type === 'error' ? 'message-error' : 'message-success'; ?>">
             <?php echo e($message); ?>
@@ -105,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="login.php" class="auth-form">
-        <?php echo csrf_field(); ?>
-
         <label for="email">Email address</label>
         <input type="email" id="email" name="email" value="<?php echo e($email); ?>"
                placeholder="name@example.com" required>

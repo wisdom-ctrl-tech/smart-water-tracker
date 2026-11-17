@@ -12,7 +12,7 @@ require_once 'helpers.php';
 $conn = db();
 
 // The code can arrive from a QR link (?code=...), the manual form
-// (POST code) or the "Log now" test buttons (POST code).
+// (POST code) or the quick container buttons (POST code).
 $raw_code = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $raw_code = isset($_POST['code']) ? (string) $_POST['code'] : '';
@@ -23,12 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $code = normalize_scan_code($raw_code);
 
 // ------------------------------------------------------------
-// Not logged in? Remember the scan, then come back after login.
+// Not logged in? Ask the visitor to log in and scan again.
 // ------------------------------------------------------------
 if (!is_logged_in()) {
-    if ($code !== '') {
-        $_SESSION['pending_scan_code'] = $code;
-    }
+    set_flash('Please log in first, then scan the label again.', 'error');
     header('Location: login.php');
     exit;
 }
@@ -39,12 +37,6 @@ $user_id = (int) $_SESSION['user_id'];
 // A code was scanned or typed: log that container's volume.
 // ------------------------------------------------------------
 if ($code !== '') {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_check()) {
-        set_flash('Your session expired. Please scan again.', 'error');
-        header('Location: scan.php');
-        exit;
-    }
-
     // "AND user_id = ?" makes sure a code only works for its owner.
     $stmt = $conn->prepare('SELECT id, name, volume_ml FROM containers
                             WHERE code = ? AND user_id = ? LIMIT 1');
@@ -140,7 +132,6 @@ $active_page = 'scan';
             <h2>Scan on this device</h2>
 
             <form method="post" action="scan.php" class="custom-form">
-                <?php echo csrf_field(); ?>
                 <label for="code">Container code</label>
                 <div class="inline-fields">
                     <input type="text" id="code" name="code" maxlength="200"
@@ -168,7 +159,6 @@ $active_page = 'scan';
                 <div class="container-quick">
                     <?php foreach ($containers as $container): ?>
                         <form method="post" action="scan.php" class="quick-container-form">
-                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="code"
                                    value="<?php echo e($container['code']); ?>">
                             <button type="submit" class="btn btn-water btn-block">

@@ -22,9 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
 
     // ---- Validation -----------------------------------------------------
-    if (!csrf_check()) {
-        $errors[] = 'Your session expired. Please fill in the form again.';
-    }
     if ($name === '') {
         $errors[] = 'Please enter your full name.';
     } elseif (mb_strlen($name) > 100) {
@@ -72,14 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 create_container($conn, $new_user_id, 'Glass', 250);
                 create_container($conn, $new_user_id, 'Bottle', 750);
 
-                // A scan made before registering belonged to another account.
-                unset($_SESSION['pending_scan_code']);
-
-                $_SESSION['flash'] = [
-                    'text' => 'Your account was created successfully. You can log in now. '
-                        . 'A 250 ml glass and a 750 ml bottle are ready to scan.',
-                    'type' => 'success',
-                ];
+                set_flash('Your account was created successfully. You can log in now. '
+                    . 'A 250 ml glass and a 750 ml bottle are ready to scan.');
                 header('Location: login.php');
                 exit;
             }
@@ -114,8 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="register.php" class="auth-form">
-        <?php echo csrf_field(); ?>
-
         <label for="name">Full name</label>
         <input type="text" id="name" name="name" value="<?php echo e($name); ?>"
                placeholder="e.g. Priya Sharma" maxlength="100" required>

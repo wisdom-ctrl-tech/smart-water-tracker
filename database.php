@@ -19,9 +19,10 @@ define('DB_CHARSET', 'utf8mb4');            // Character set used by the tables
 // Examples: 'Europe/London', 'America/New_York', 'Asia/Kolkata', 'Australia/Sydney'
 define('APP_TIMEZONE', 'Asia/Kolkata');
 
-// The address that printed QR labels point to. This is the computer's Wi-Fi
-// address on the local network, including the project folder. If that address
-// changes, update it here and print the labels again.
+// The address that printed QR labels and password-reset links point to.
+// This is the computer's Wi-Fi address on the local network, including the
+// project folder. If that address changes, update it here and print the
+// labels again.
 define('APP_BASE_URL', 'http://192.168.1.66/smart-water-tracker');
 
 // Limits used to validate the numbers people type in.
@@ -31,11 +32,6 @@ define('MAX_GOAL_ML', 10000);   // Largest daily goal a user may choose
 
 // How long a "forgot password" link stays valid, in minutes.
 define('RESET_TOKEN_MINUTES', 30);
-
-// XAMPP has no mail server, so the reset link is shown on the page after
-// the email address is entered. Set this to false if you ever send the
-// link by email instead.
-define('SHOW_RESET_LINK', true);
 
 date_default_timezone_set(APP_TIMEZONE);
 

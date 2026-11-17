@@ -11,24 +11,11 @@ require_once 'database.php';
 
 /**
  * The address of the app, always ending with a slash.
- * Example: http://192.168.1.10/smart-water-tracker/
- *
- * APP_BASE_URL in database.php wins when it is filled in. Otherwise the
- * address in the browser bar is used, which is the easiest option when the
- * app is opened through the computer's LAN address.
+ * Example: http://192.168.1.66/smart-water-tracker/
  */
 function app_base_url(): string
 {
-    if (APP_BASE_URL !== '') {
-        return rtrim(APP_BASE_URL, '/') . '/';
-    }
-
-    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-    $folder = str_replace('\\', '/', dirname(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '/'));
-    $folder = rtrim($folder, '/');
-
-    return $scheme . '://' . $host . $folder . '/';
+    return rtrim(APP_BASE_URL, '/') . '/';
 }
 
 /** Remembers a one-time message that is shown after the next redirect. */

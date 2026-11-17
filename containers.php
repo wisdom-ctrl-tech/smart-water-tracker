@@ -20,12 +20,6 @@ $volume  = '';
 // Add or delete a container
 // ------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!csrf_check()) {
-        set_flash('Your session expired. Please reload the page and try again.', 'error');
-        header('Location: containers.php');
-        exit;
-    }
-
     $action = isset($_POST['action']) ? $_POST['action'] : '';
 
     // ---- Add ----------------------------------------------------------
@@ -142,7 +136,6 @@ $active_page = 'containers';
         <?php endif; ?>
 
         <form method="post" action="containers.php" class="container-form">
-            <?php echo csrf_field(); ?>
             <input type="hidden" name="action" value="add">
 
             <div class="form-row">
@@ -203,10 +196,9 @@ $active_page = 'containers';
 
                         <div class="qr-actions no-print">
                             <a class="btn btn-small btn-water"
-                               href="scan.php?code=<?php echo urlencode($container['code']); ?>">Log now (test)</a>
+                               href="scan.php?code=<?php echo urlencode($container['code']); ?>">Log now</a>
                             <form method="post" action="containers.php" class="delete-form"
                                   data-confirm="Delete this container and its QR label?">
-                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="container_id"
                                        value="<?php echo (int) $container['id']; ?>">

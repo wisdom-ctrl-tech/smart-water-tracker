@@ -25,11 +25,6 @@
     box-sizing: border-box;
 }
 
-/* The hidden attribute must win over display rules such as .btn. */
-[hidden] {
-    display: none !important;
-}
-
 body {
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, Arial, sans-serif;
@@ -454,17 +449,6 @@ a {
 
 /* ---------------- Forms inside cards ---------------- */
 
-.quick-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-
-.quick-buttons .btn {
-    flex: 1 1 90px;
-}
-
 .custom-form label {
     display: block;
     font-weight: 600;
@@ -628,33 +612,8 @@ a {
 
 /* ---------------- Scan / containers ---------------- */
 
-.message-info {
-    background: var(--blue-light);
-    border-color: var(--border);
-    color: var(--blue-dark);
-}
-
 .scan-cta .btn + .btn {
     margin-top: 8px;
-}
-
-.or-separator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 18px 0;
-    color: var(--text-soft);
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-.or-separator::before,
-.or-separator::after {
-    content: "";
-    flex: 1 1 auto;
-    height: 1px;
-    background: var(--border);
 }
 
 .steps {
