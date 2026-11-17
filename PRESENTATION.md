@@ -32,7 +32,8 @@ scanning a QR label on their glass or bottle, so they do not have to type amount
 5. **Fallback** — "If a phone is not available, the Scan page also lets you tap a
    container or type the code printed under the label."
 6. **Password reset** — "If a user forgets their password, they can request a one-time
-   link. XAMPP has no email server, so the link is shown on the screen."
+   link. XAMPP has no email server, so the link is shown on the screen." *Tip:* stop after
+   the link appears unless you want to change your real password.
 7. **Finish** — "All data is stored in a MySQL database, so the history is still there
    after logging out."
 
