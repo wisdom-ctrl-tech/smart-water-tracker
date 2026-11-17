@@ -13,7 +13,7 @@ scanning a QR label on their glass or bottle, so they do not have to type amount
 - [ ] The laptop and phone are on the same Wi-Fi network.
 - [ ] `APP_BASE_URL` in `database.php` matches the laptop's current Wi-Fi address
       (`ipconfig` → IPv4 Address). If it changed, update it and reprint the labels.
-- [ ] You are logged in on the phone.
+- [ ] You are logged in on the phone as the same account you will use on the laptop.
 - [ ] At least one QR label is printed and stuck on a container.
 - [ ] Your account has a container (Glass 250 ml or Bottle 750 ml).
 - [ ] Open the app on the laptop: <http://localhost/smart-water-tracker/>
@@ -27,7 +27,8 @@ scanning a QR label on their glass or bottle, so they do not have to type amount
 3. **Containers** — "Each container has a name, a volume, and a unique QR code. The
    labels are printed from this page."
 4. **Scan with the phone** — "I point the phone camera at the label on the glass. It
-   opens the app and logs 250 ml automatically. The dashboard updates."
+   opens the app and logs 250 ml automatically. I refresh the dashboard on the laptop
+   and the total goes up."
 5. **Fallback** — "If a phone is not available, the Scan page also lets you tap a
    container or type the code printed under the label."
 6. **Password reset** — "If a user forgets their password, they can request a one-time
@@ -46,7 +47,7 @@ scan.php looks up the container code in the database
     ↓
 It inserts the container's volume into water_logs
     ↓
-The dashboard adds it to today's total
+The dashboard reads the new total from the database
 ```
 
 - The QR code contains a **URL**, not a password or personal data.
